@@ -15,6 +15,7 @@ class CDebugLog
     void println(int logLvl, const void *string, char type);
   private:
     bool serialInitialized = false;
+    bool buildString(String *output, int logLvl, const void *string, char type);
 };
 
 #endif // DEBUGLOG_H

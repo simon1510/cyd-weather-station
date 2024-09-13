@@ -95,7 +95,7 @@ bool CWeatherData::getOnlineData(CWeatherData::OnlineData *weatherData)
         debugLog.print(DEBUG_LVL_INFO, "Pressure: ", 's');
         debugLog.println(DEBUG_LVL_INFO, (void*)&weatherData->pressure, 'i');
         debugLog.print(DEBUG_LVL_INFO, "Humidity: ", 's');
-        debugLog.println(DEBUG_LVL_INFO, (void*)&weatherData->humidity, 'f');
+        debugLog.println(DEBUG_LVL_INFO, (void*)&weatherData->humidity, 'i');
         debugLog.print(DEBUG_LVL_INFO, "Wind Speed: ", 's');
         debugLog.println(DEBUG_LVL_INFO, (void*)&weatherData->wind_speed, 'f');
 
