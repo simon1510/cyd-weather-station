@@ -91,18 +91,25 @@ bool CTftGUI::drawTestScreen(CWeatherData::LocalData *localData, CWeatherData::O
 //***********************************************
 bool CTftGUI::drawHomeScreen(CWeatherData::LocalData *localData, CWeatherData::OnlineData *onlineData)
 {
-  CTftGUI::guiInstancePtr = this;
+  bool retVal = false;
 
-  // Draw PNG as background
-  int16_t rc = png.openFLASH((uint8_t *)background, sizeof(background), CTftGUI::pngDrawWrapper);
-  if (rc == PNG_SUCCESS) {
-    tftInstance.startWrite();
-    rc = png.decode(NULL, 0);
-    tftInstance.endWrite();
-    // png.close(); // not needed for memory->memory decode
+  if((NULL != localData) && (NULL != onlineData))
+  {
+    CTftGUI::guiInstancePtr = this;
+
+    // Draw PNG as background
+    int16_t rc = png.openFLASH((uint8_t *)background, sizeof(background), CTftGUI::pngDrawWrapper);
+    if (rc == PNG_SUCCESS) {
+      tftInstance.startWrite();
+      rc = png.decode(NULL, 0);
+      tftInstance.endWrite();
+      // png.close(); // not needed for memory->memory decode
+
+      retVal = true;
+    }
   }
 
-  return true;
+  return retVal;
 } /* CTftGUI::drawHomeScreen() */
 
 //***********************************************
@@ -110,12 +117,15 @@ bool CTftGUI::drawHomeScreen(CWeatherData::LocalData *localData, CWeatherData::O
 //***********************************************
 void CTftGUI::pngDraw(PNGDRAW *pDraw)
 {
-  // PNG start position
-  int16_t xpos = 0;
-  int16_t ypos = 0;
+  if(NULL != pDraw)
+  {
+    // PNG start position
+    int16_t xpos = 0;
+    int16_t ypos = 0;
 
-  uint16_t lineBuffer[MAX_IMAGE_WIDTH];
-  png.getLineAsRGB565(pDraw, lineBuffer, PNG_RGB565_BIG_ENDIAN, 0xffffffff);
-  CTftGUI::tftInstance.pushImage(xpos, ypos + pDraw->y, pDraw->iWidth, 1, lineBuffer);
+    uint16_t lineBuffer[MAX_IMAGE_WIDTH];
+    png.getLineAsRGB565(pDraw, lineBuffer, PNG_RGB565_BIG_ENDIAN, 0xffffffff);
+    CTftGUI::tftInstance.pushImage(xpos, ypos + pDraw->y, pDraw->iWidth, 1, lineBuffer);
+  }
 } /* CTftGUI::pngDraw() */
 
