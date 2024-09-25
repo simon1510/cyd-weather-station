@@ -1,6 +1,21 @@
 #ifndef PROJECTCONFIG_H
 #define PROJECTCONFIG_H
 
+//==========================================================================
+//
+//      projectConfig.h
+//
+//      Global project settings such as pin definitions and API Keys
+//
+//==========================================================================
+//==========================================================================
+//
+// Author(s):    Simon Haag
+// Contributors: Simon Haag
+// Date:         2024-09-25
+//
+//==========================================================================
+
 /*******************************************
  * Global debug level for serial outputs
  *
@@ -17,6 +32,7 @@
 // SHT21 I2C pin definitions
 #define SHT21_SDA     22
 #define SHT21_SCL     27
+// Pin definition for enabling touch functions
 #define TOUCH_CS      21
 
 /*******************************************

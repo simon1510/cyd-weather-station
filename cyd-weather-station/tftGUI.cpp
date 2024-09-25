@@ -1,4 +1,26 @@
+//==========================================================================
+//
+//      tftGUI.cpp
+//
+//      A module to draw user defined screens on a TFT display.
+//
+//==========================================================================
+//==========================================================================
+//
+// Author(s):    Simon Haag
+// Contributors: Simon Haag
+// Date:         2024-09-25
+//
+//==========================================================================
+
+// ----------------------------
+// Standard Libraries
+// ----------------------------
 #include <Arduino.h>
+
+// ----------------------------
+// Custom Libraries
+// ----------------------------
 #include "tftGUI.h"
 #include "background.h"
 
@@ -11,12 +33,19 @@
 // Can be installed from the library manager (Search for "TFT_eSPI")
 //https://github.com/Bodmer/TFT_eSPI
 
-#define MAX_IMAGE_WIDTH 240 // Adjust for your images
+// Maximum image width
+// Adjust for your images
+#define MAX_IMAGE_WIDTH 240
 
+// Instance of PNG class
 PNG CTftGUI::png;
 
+// Pointer to non-static TftGUI class
 CTftGUI* CTftGUI::guiInstancePtr = nullptr;
 
+//***********************************************
+//  CTftGUI::begin()
+//***********************************************
 void CTftGUI::begin(void)
 {
   // Start the TFT display and set it to black
@@ -27,8 +56,11 @@ void CTftGUI::begin(void)
   // Clear the screen before writing to it and set default text colors
   tftInstance.fillScreen(TFT_BLACK);
   tftInstance.setTextColor(TFT_WHITE, TFT_BLACK);
-}
+} /* CTftGUI::begin() */
 
+//***********************************************
+//  CTftGUI::drawTestScreen()
+//***********************************************
 bool CTftGUI::drawTestScreen(CWeatherData::LocalData *localData, CWeatherData::OnlineData *onlineData)
 {
   bool retVal = false;
@@ -52,8 +84,11 @@ bool CTftGUI::drawTestScreen(CWeatherData::LocalData *localData, CWeatherData::O
   }
 
   return retVal;
-}
+} /* CTftGUI::drawTestScreen() */
 
+//***********************************************
+//  CTftGUI::drawHomeScreen()
+//***********************************************
 bool CTftGUI::drawHomeScreen(CWeatherData::LocalData *localData, CWeatherData::OnlineData *onlineData)
 {
   CTftGUI::guiInstancePtr = this;
@@ -68,8 +103,11 @@ bool CTftGUI::drawHomeScreen(CWeatherData::LocalData *localData, CWeatherData::O
   }
 
   return true;
-}
+} /* CTftGUI::drawHomeScreen() */
 
+//***********************************************
+//  CTftGUI::pngDraw()
+//***********************************************
 void CTftGUI::pngDraw(PNGDRAW *pDraw)
 {
   // PNG start position
@@ -79,5 +117,5 @@ void CTftGUI::pngDraw(PNGDRAW *pDraw)
   uint16_t lineBuffer[MAX_IMAGE_WIDTH];
   png.getLineAsRGB565(pDraw, lineBuffer, PNG_RGB565_BIG_ENDIAN, 0xffffffff);
   CTftGUI::tftInstance.pushImage(xpos, ypos + pDraw->y, pDraw->iWidth, 1, lineBuffer);
-}
+} /* CTftGUI::pngDraw() */
 

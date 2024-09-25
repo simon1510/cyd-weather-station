@@ -1,15 +1,54 @@
+//==========================================================================
+//
+//      weatherData.cpp
+//
+//      A module which fetches weather and environmental data
+//      from a web server and from local sensors.
+//
+//==========================================================================
+//==========================================================================
+//
+// Author(s):    Simon Haag
+// Contributors: Simon Haag
+// Date:         2024-09-25
+//
+//==========================================================================
+
+// ----------------------------
+// Standard Libraries
+// ----------------------------
 #include <Arduino.h>
 #include <WiFi.h>
-#include <HTTPClient.h>
-#include <ArduinoJson.h>
+
+// ----------------------------
+// Custom Libraries
+// ----------------------------
 #include "weatherData.h"
 
+// ----------------------------
+// Additional Libraries - each one of these will need to be installed.
+// ----------------------------
+#include <ArduinoJson.h>
+// A library for handling JSON formats
+//
+// Can be installed from the library manager (Search for "ArduinoJson")
 
+#include <HTTPClient.h>
+// A library for making HTTP GET, POST and PUT requests to a web server
+//
+// Can be installed from the library manager (Search for "HttpClient")
+
+//***********************************************
+//  CWeatherData::CWeatherData()
+//***********************************************
 CWeatherData::CWeatherData(const CDebugLog &log, const SHT2x &sht2x) : debugLog(log), sht21(sht2x)
 {
   // Nothing to do
 }
 
+//***********************************************
+//  CWeatherData::begin()
+//***********************************************
 void CWeatherData::begin(void)
 {
   // Setup SHT21
@@ -17,6 +56,9 @@ void CWeatherData::begin(void)
   CWeatherData::sht21.begin();
 }
 
+//***********************************************
+//  CWeatherData::httpGETRequest()
+//***********************************************
 String CWeatherData::httpGETRequest(const char* serverName)
 {
   WiFiClient client;
@@ -45,6 +87,9 @@ String CWeatherData::httpGETRequest(const char* serverName)
   return payload;
 }
 
+//***********************************************
+//  CWeatherData::getOnlineData()
+//***********************************************
 bool CWeatherData::getOnlineData(CWeatherData::OnlineData *weatherData)
 {
   bool retVal = false;
@@ -70,6 +115,10 @@ bool CWeatherData::getOnlineData(CWeatherData::OnlineData *weatherData)
       }
       else
       {
+        /***********************************************************
+         * Parse weather JSON object and store all data into struct
+         ***********************************************************/
+
         JsonObject weather = doc["weather"][0];
         weatherData->weather_id = weather["id"];
         strcpy(weatherData->description, (const char*)weather["description"]);
@@ -90,6 +139,7 @@ bool CWeatherData::getOnlineData(CWeatherData::OnlineData *weatherData)
         JsonObject wind = doc["wind"];
         weatherData->wind_speed = wind["speed"];
 
+        // Print weather data from web server to console
         debugLog.print(DEBUG_LVL_INFO, "Temperature: ", 's');
         debugLog.println(DEBUG_LVL_INFO, (void*)&weatherData->temperature, 'f');
         debugLog.print(DEBUG_LVL_INFO, "Pressure: ", 's');
@@ -111,12 +161,17 @@ bool CWeatherData::getOnlineData(CWeatherData::OnlineData *weatherData)
   return retVal;
 }
 
+//***********************************************
+//  CWeatherData::getLocalData()
+//***********************************************
 bool CWeatherData::getLocalData(CWeatherData::LocalData *weatherData)
 {
+  // Read data from SHT21 sensor
   CWeatherData::sht21.read();
   weatherData->temperature = CWeatherData::sht21.getTemperature();
   weatherData->humidity = CWeatherData::sht21.getHumidity();
 
+  // Print SHT21 sensor data to console
   debugLog.println(DEBUG_LVL_INFO, "SHT21 data:", 's');
   debugLog.print(DEBUG_LVL_INFO, "Temperature: ", 's');
   debugLog.println(DEBUG_LVL_INFO, (void*)&weatherData->temperature, 'f');

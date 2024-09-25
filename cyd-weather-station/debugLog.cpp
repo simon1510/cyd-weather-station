@@ -1,7 +1,32 @@
+//==========================================================================
+//
+//      debugLog.cpp
+//
+//      A logging module which enables to (de)activate logs
+//      for specific log levels.
+//
+//==========================================================================
+//==========================================================================
+//
+// Author(s):    Simon Haag
+// Contributors: Simon Haag
+// Date:         2024-09-25
+//
+//==========================================================================
+
+// ----------------------------
+// Standard Libraries
+// ----------------------------
 #include <Arduino.h>
+
+// ----------------------------
+// Custom Libraries
+// ----------------------------
 #include "debugLog.h"
 
-
+//***********************************************
+//  CDebugLog::buildString()
+//***********************************************
 bool CDebugLog::buildString(String *output, int logLvl, const void *string, char type)
 {
   bool retVal = false;
@@ -36,9 +61,11 @@ bool CDebugLog::buildString(String *output, int logLvl, const void *string, char
   }
 
   return retVal;
-}
+} /* CDebugLog::buildString() */
 
-
+//***********************************************
+//  CDebugLog::CDebugLog()
+//***********************************************
 CDebugLog::CDebugLog(void)
 {
   if((DEBUG_LEVEL > DEBUG_LVL_NONE) && (false == serialInitialized))
@@ -46,8 +73,11 @@ CDebugLog::CDebugLog(void)
     Serial.begin(115200);
     serialInitialized = true;
   }
-}
+} /* CDebugLog::CDebugLog() */
 
+//***********************************************
+//  CDebugLog::print()
+//***********************************************
 void CDebugLog::print(int logLvl, const void *string, char type)
 {
   String printString;
@@ -56,8 +86,11 @@ void CDebugLog::print(int logLvl, const void *string, char type)
   {
     Serial.print(printString);
   }
-}
+} /* CDebugLog::print() */
 
+//***********************************************
+//  CDebugLog::println()
+//***********************************************
 void CDebugLog::println(int logLvl, const void *string, char type)
 {
   String printString;
@@ -66,4 +99,4 @@ void CDebugLog::println(int logLvl, const void *string, char type)
   {
     Serial.println(printString);
   }
-}
+} /* CDebugLog::println() */

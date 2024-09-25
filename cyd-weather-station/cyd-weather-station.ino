@@ -1,12 +1,22 @@
-/*******************************************************************
-    A simple weather station for the ESP32 Cheap Yellow Display.
-    Shows local environment sensor data and weather forecast
-    from OpenWeatherMap API.
-
-    Inspired by:
-    https://github.com/witnessmenow/ESP32-Cheap-Yellow-Display
-
- *******************************************************************/
+//==========================================================================
+//
+//      cyd-weather-station.ino
+//
+//      A simple weather station for the ESP32 Cheap Yellow Display.
+//      Shows local environment sensor data and weather forecast
+//      from OpenWeatherMap API.
+//
+//      Inspired by:
+//      https://github.com/witnessmenow/ESP32-Cheap-Yellow-Display
+//
+//==========================================================================
+//==========================================================================
+//
+// Author(s):    Simon Haag
+// Contributors: Simon Haag
+// Date:         2024-09-25
+//
+//==========================================================================
 
 // Make sure to copy the UserSetup.h file into the TFT_eSPI library.
 // The pins are defined in there.
@@ -34,12 +44,6 @@
 // Can be installed from the library manager (Search for "TFT_eSPI")
 //https://github.com/Bodmer/TFT_eSPI
 
-#include <TFT_eSPI.h>
-// A library for interfacing with LCD displays
-//
-// Can be installed from the library manager (Search for "TFT_eSPI")
-//https://github.com/Bodmer/TFT_eSPI
-
 // ----------------------------
 
 // ----------------------------
@@ -59,6 +63,7 @@ static unsigned long timerDelay = 10000;
 // Status of WIFI connection
 static int wifiStatus;
 
+// Data to store local weather data and weather data from web server
 static CWeatherData::OnlineData onlineWeatherData;
 static CWeatherData::LocalData localWeatherData;
 
@@ -73,8 +78,6 @@ void setup()
 {
   // Setup TFT display
   tftGUI.begin();
-
-  weatherData.begin();
 
   // Connect to WiFi
   WiFi.begin(ssid, password);
@@ -92,7 +95,12 @@ void setup()
   debugLog.println(DEBUG_LVL_INFO, "IP address: ", 's');
   debugLog.println(DEBUG_LVL_INFO, (void*)(String(WiFi.localIP()).c_str()), 's');
 
+  // Setup weather services
+  weatherData.begin();
+
+  // Get current weather from web server
   weatherData.getOnlineData(&onlineWeatherData);
+  // Get current weather from local sensors
   weatherData.getLocalData(&localWeatherData);
 }
 
