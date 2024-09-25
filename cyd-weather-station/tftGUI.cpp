@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "tftGUI.h"
+#include "background.h"
 
 // ----------------------------
 // Additional Libraries - each one of these will need to be installed.
@@ -10,16 +11,17 @@
 // Can be installed from the library manager (Search for "TFT_eSPI")
 //https://github.com/Bodmer/TFT_eSPI
 
-// CTftGUI::CTftGUI(const TFT_eSPI& tft) : tftInstance(tft)
-// {
-//   //instance = TFT_eSPI::getSPIinstance();
-// }
+#define MAX_IMAGE_WIDTH 240 // Adjust for your images
+
+PNG CTftGUI::png;
+
+CTftGUI* CTftGUI::guiInstancePtr = nullptr;
 
 void CTftGUI::begin(void)
 {
   // Start the TFT display and set it to black
-  tftInstance.init();
-  tftInstance.setRotation(3); //This is the display in landscape upside down
+  tftInstance.begin();
+  //tftInstance.setRotation(3); //This is the display in landscape upside down
   tftInstance.setTextWrap(true, true);
 
   // Clear the screen before writing to it and set default text colors
@@ -52,8 +54,30 @@ bool CTftGUI::drawTestScreen(CWeatherData::LocalData *localData, CWeatherData::O
   return retVal;
 }
 
-// TFT_eSPI& CTftGUI::tft()
-// {
-//     static TFT_eSPI instance;
-//     return instance;
-// }
+bool CTftGUI::drawHomeScreen(CWeatherData::LocalData *localData, CWeatherData::OnlineData *onlineData)
+{
+  CTftGUI::guiInstancePtr = this;
+
+  // Draw PNG as background
+  int16_t rc = png.openFLASH((uint8_t *)background, sizeof(background), CTftGUI::pngDrawWrapper);
+  if (rc == PNG_SUCCESS) {
+    tftInstance.startWrite();
+    rc = png.decode(NULL, 0);
+    tftInstance.endWrite();
+    // png.close(); // not needed for memory->memory decode
+  }
+
+  return true;
+}
+
+void CTftGUI::pngDraw(PNGDRAW *pDraw)
+{
+  // PNG start position
+  int16_t xpos = 0;
+  int16_t ypos = 0;
+
+  uint16_t lineBuffer[MAX_IMAGE_WIDTH];
+  png.getLineAsRGB565(pDraw, lineBuffer, PNG_RGB565_BIG_ENDIAN, 0xffffffff);
+  CTftGUI::tftInstance.pushImage(xpos, ypos + pDraw->y, pDraw->iWidth, 1, lineBuffer);
+}
+

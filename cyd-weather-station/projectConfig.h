@@ -17,6 +17,7 @@
 // SHT21 I2C pin definitions
 #define SHT21_SDA     22
 #define SHT21_SCL     27
+#define TOUCH_CS      21
 
 /*******************************************
  * Configuration for OpenWeatherMap
